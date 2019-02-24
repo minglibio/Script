@@ -1,5 +1,5 @@
 # Script
 The script used in my research
 
-@Author: Ming Li
-@Mail: minnglee@163.com
+\@Author: Ming Li \n
+\@Mail: minnglee@163.com
