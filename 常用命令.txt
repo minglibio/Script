@@ -1,0 +1,173 @@
+/bin/bash
+
+######## 西农服务器任务提交
+denovosub节点：denovosub 核数 -e xxx.e -o xxx.o -J xxx ./xxx.sh
+alias  bjsub="jsub -R \"rusage[res=1]span[hosts=1]\" -q smpqueue"
+alias  sjsub="jsub -R \"rusage[res=1]span[hosts=1]\""
+alias  ybjsub="jsub -R \"rusage[res=1]span[hosts=1]\" -q jyqueue"
+alias  ysjsub="jsub -R \"rusage[res=1]span[hosts=1]\" -q jynodequeue"
+
+######## Change node
+#IP=`ip -f inet addr|grep "172.16.112"|awk '{print $1}' FS="/"|awk '{print $NF}'`
+#if [ ${IP} != "172.16.112.124" ];then
+#    ssh node124
+#fi
+#LOGINTTY=$(tty|sed s#/dev/pts.*#/dev/pts#)
+#if [ $LOGINTTY != "/dev/pts" ];then
+#    echo "OK!"
+#else
+#    if [ ${IP} != "172.16.112.124" ];then
+#        echo "Test!"
+#        ssh node124
+#    fi
+#fi
+
+######## vcftools
+窗口Fst计算：vcftools --gzvcf ../sample219.snp.flt.vcf.gz --weir-fst-pop wild --weir-fst-pop Z2PK --fst-window-size 5000 --fst-window-step 2500 --out wildVSZ2 --max-missing 0.9 --maf 0.01
+单点Fst计算：vcftools --gzvcf ../sample219.snp.flt.vcf.gz --weir-fst-pop wild --weir-fst-pop Z2PK --out wildVSZ2 --max-missing 0.9 --maf 0.01
+过滤区域：vcftools --gzvcf ../sample219.snp.flt.vcf.gz --bed/--exclude-bed LDBlock.bed --recode --out sample219.snp.flt.ld.vcf
+        (bed文件必须有header line(chrom, chromStart and chromEnd))
+
+######## 查找
+find {path} -name '{expression}'
+######## awk
+1、求和
+awk '{sum+=$1} END {print "Sum = ", sum}' data
+2、求平均
+awk '{sum+=$1} END {print "Average = ", sum/NR}' data
+3、求最大值
+按数值：
+awk 'BEGIN {max = 0} {if ($1+0 > max+0 ) max=$1 fi} END {print "Max=", max}' data
+按字符串：
+awk 'BEGIN {max = 0} {if ($1 > max ) max=$1 fi} END {print "Max=", max}' data
+输出最大值所在行:
+awk 'BEGIN {max = 0} {if ($1+0 > max+0) {max=$1 ;content=$0} } END {print content}' data
+4、求最小值（min的初始值设置一个超大数即可）
+awk 'BEGIN {min = 1999999} {if ($1<min) min=$1 fi} END {print "Min=", min}'
+
+########sort
+前两列排序：sort -k1,1g -k2,2g file
+sort命令是帮我们依据不同的数据类型进行排序，其语法及常用参数格式：
+sort [-bcfMnrtk][源文件][-o 输出文件] 
+补充说明：sort可针对文本文件的内容，以行为单位来排序。
+参　　数：
+  -b   忽略每行前面开始出的空格字符。
+  -c   检查文件是否已经按照顺序排序。
+  -f   排序时，忽略大小写字母。
+  -M   将前面3个字母依照月份的缩写进行排序。
+  -n   依照数值的大小排序。
+  -o<输出文件>   将排序后的结果存入指定的文件。
+  -r   以相反的顺序来排序。
+  -t<分隔字符>   指定排序时所用的栏位分隔字符。
+  -k  选择以哪个区间进行排序。
+
+
+########
+bgzip my.vcf
+tabix -p vcf my.vcf.gz
+统计gz文件行数：zcat xxx.gz |wc -l
+
+######## ascp 下数据
+将以下内容写入文件 asperaweb_id_dsa.openssh：
+-----BEGIN DSA PRIVATE KEY-----
+MIIBuwIBAAKBgQDkKQHD6m4yIxgjsey6Pny46acZXERsJHy54p/BqXIyYkVOAkEp
+KgvT3qTTNmykWWw4ovOP1+Di1c/2FpYcllcTphkWcS8lA7j012mUEecXavXjPPG0
+i3t5vtB8xLy33kQ3e9v9/Lwh0xcRfua0d5UfFwopBIAXvJAr3B6raps8+QIVALws
+yeqsx3EolCaCVXJf+61ceJppAoGAPoPtEP4yzHG2XtcxCfXab4u9zE6wPz4ePJt0
+UTn3fUvnQmJT7i0KVCRr3g2H2OZMWF12y0jUq8QBuZ2so3CHee7W1VmAdbN7Fxc+
+cyV9nE6zURqAaPyt2bE+rgM1pP6LQUYxgD3xKdv1ZG+kDIDEf6U3onjcKbmA6ckx
+T6GavoACgYEAobapDv5p2foH+cG5K07sIFD9r0RD7uKJnlqjYAXzFc8U76wXKgu6
+WXup2ac0Co+RnZp7Hsa9G+E+iJ6poI9pOR08XTdPly4yDULNST4PwlfrbSFT9FVh
+zkWfpOvAUc8fkQAhZqv/PE6VhFQ8w03Z8GpqXx7b3NvBR+EfIx368KoCFEyfl0vH
+Ta7g6mGwIMXrdTQQ8fZs
+-----END DSA PRIVATE KEY-----
+
+/home/CYD/.aspera/connect/bin/ascp -i /home/LM/download/asperaweb_id_dsa.openssh -k 1 -T anonftp@ftp-private.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByRun/sra/SRR/SRR543/SRR5438050/SRR5438050.sra ./
+
+######## prefetch 下载
+/home/LM/bin/sratoolkit.2.9.2-centos_linux64/bin/prefetch --option-file SRR_Acc_List.txt -O ./
+######## sra to fastq
+fastq-dump --split-3 {input}.sra -O {OutputPath}
+############samtools
+创建fai文件：samtools faidx duckbase.refseq.v4.fasta
+提取Bam： samtools view -h AOOA-AWD01.sort.dedup.bam X:20000001-40000000 -bS > X:20000001-40000000.bam
+######## Picard
+创建GATK dict文件：java -jar /stor9000/apps/appsoftware/BioSoftware/bin/picard.jar CreateSequenceDictionary R=duckbase.refseq.v4.fasta O=duckbase.refseq.v4.dict
+
+Picard reheader 不耗内存 2G
+
+##########索引
+bowtie2-build --threads 8 in.fa prefix
+bwa index in.fa [-p prefix]
+
+########  VCF index
+awk '$4!="*"&&$5!="*" {print $0}' MUC6-front.recode.vcf > MUC6-front.recode.edit.vcf
+bgzip MUC6-front.recode.edit.vcf
+tabix -p vcf MUC6-front.recode.edit.vcf.gz
+############# BWA picard mapping sort MarkDuplicates
+可用 ~/script/mapping/02.MappingWithMulLane.py 生成
+
+bwa mem -t 8 -M -R '@RG\tID:{Name}\tLB:{Name}\tPL:ILLUMINA\tSM:{Name}' ref.index {Name}.R1.fq.gz {Name}.R2.fq.gz |java -Xmx50g -Djava.io.tmpdir=/stor9000/apps/users/NWSUAF/2015050469/tmp -jar ~/software/picard-2.18.7.jar SortSam INPUT/dev/stdin OUTPUT=./{Name}.sort.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=LENIENT
+echo IROO-ORI01 mapping and sort finished!
+
+java -Xmx50g -Djava.io.tmpdir=/stor9000/apps/users/NWSUAF/2015050469/tmp -jar ~/software/picard-2.18.7.jar MarkDuplicates INPUT=./{Name}.sort.bam OUTPUT=./{Name}.sort.dedup.bam METRICS_FILE=./{Name}_dedup REMOVE_DUPLICATES=true CREATE_INDEX=true ASSUME_SORTED=true VALIDATION_STRINGENCY=LENIENT MAX_FILE_HANDLES=2000
+echo IROO-ORI01 remove dup finished!
+
+############ 合并 bam 并改名字 reheader
+java -Xmx50g -Djava.io.tmpdir=/stor9000/apps/users/NWSUAF/2015050469/tmp -jar ~/software/picard-2.18.7.jar MergeSamFiles I={Path}/{bam}.sort.bam I={Path}/{bam}.sort.bam ...... ORT_ORDER=coordinate O={Path}/{Name}_tmp.bam AS=true
+
+java -Xmx50g -Djava.io.tmpdir=/stor9000/apps/users/NWSUAF/2015050469/tmp -jar ~/software/picard-2.18.7.jar AddOrReplaceReadGroups I={Path}/{Name}_tmp.bam O={Path}/{Name}.sort.bam SO=coordinate ID={Name} LB={Name} PL=illumina PU={Name} SM={Name} CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT
+
+############# 检查 bam 的完整性
+#!/bin/bash
+FileList=`ls -al *.bam |awk '{print $9}'`
+for File in ${FileList}
+do
+echo ${File}
+samtools flagstat ${File} &
+Time1=`date +%s`
+Time2=`date +%s`
+i=$((${Time2} - ${Time1}))
+while [[ "${i}" -ne "3" ]]
+do
+    Time2=`date +%s`
+    i=$((${Time2} - ${Time1}))
+done
+kill $!
+done
+############# GATK:
+直接用bam list call snp。文件一定要以 .list 结尾。
+java  -jar /stor9000/apps/appsoftware/BioSoftware/software/GATK/GenomeAnalysisTK.jar \
+        -R /stor9000/apps/users/NWSUAF/2015050469/Ref/Sheep/OAR4.0/GCF_000298735.2_Oar_v4.0_genomic_rename.fna \
+        -I Bam.list \
+        -T  UnifiedGenotyper \
+        -o Wild.22.GATK.raw.vcf \
+        --output_mode EMIT_VARIANTS_ONLY \
+        -glm SNP \
+        -L 22
+
+
+############# bcftools call snp
+bcftools mpileup -b bamlist -C 50 -d 250 -f ref.fa -q 20 -Q 20 -r chr -m 3 -a 'FORMAT/AD' --threads 4 -O b -o out.bcf.gz
+bcftools mpileup -b BamList -C 50 -d 250 -f ref.fa -q 20 -Q 20 -R 4D.site -m 3 -a 'FORMAT/AD' --threads 12 -O b -o out.bcf.gz
+bcftools call -V indels -O z -o Wild.4D.vcf.gz out.bcf.gz -m
+-r 直接跟区域或染色体；-R 跟文件；-R 快 -T 内存小。
+
+
+chrom=$1
+/stor9000/apps/users/NWSUAF/2012010954/Software/bcftools1.9/bin/bcftools \
+        mpileup \
+        --min-MQ 20 \
+        --adjust-MQ 50 \
+        -r $chrom \
+        -T /stor9000/apps/users/NWSUAF/2012010954/02_AncientDNA/01_data/07_merge_bcf/V7_M101A3/chrAuto.M101A3.rmTransi.vcf.gz \
+        --min-BQ 20 \
+        -f /stor9000/apps/users/NWSUAF/2012010954/Genome/ASM_gaot/ASM.fa \
+        -b ancient_bamlist | \
+/stor9000/apps/users/NWSUAF/2012010954/Software/bcftools1.9/bin/bcftools \
+        call \
+        --threads 3 \
+        -O z \
+        --skip-variants indels \
+        --multiallelic-caller \
+        -o ../out/sciGoat.chr${chrom}.vcf.gz

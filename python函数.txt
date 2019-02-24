@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+
+
+######### 读取Fasta文件并返回以染色体为键，序列为值的字典
+def LoadFasta(File):
+    Dict = {}
+    seq = ''
+    for line in File:
+        line = line.strip()
+        if line[0] == '>':
+            if len(seq) > 0:
+                Dict[name] = seq
+            name = line.split()[0][1:]
+            seq = ''
+        else: seq += line
+    Dict[name] = seq
+    return Dict
+    
+    
+def LoadFst():
+    '''
+    Fst file format:
+    CHROM   POS     WEIR_AND_COCKERHAM_FST
+    chr1    157     0.0260691
+    chr1    161     -0.0034835
+    chr1    268     0.0162679
+    chr1    269     0.0162679
+    '''
+    Dict = {}
+    for line in args.SnpFst:
+        if line.startswith('CHR'): continue
+        line=line.strip().split()
+        if line[2].startswith('-'): 
+            if args.KeepZero:
+                line[2]='0'
+            else: continue
+        Dict['{0}-{1}'.format(line[0],line[1])] = float(line[2])
+    return Dict
+    
+def LoadVcf(file):
+    '''
+    Normal VCF format
+    need: import gzip
+    '''
+    Dict={}
+    if args.gz:
+        VCF = gzip.open(file,'rb')
+        for line in VCF:
+            line = line.decode('GBK')
+            if line.startswith('#'): continue
+            line=line.strip().split()
+            Dict['{0}-{1}'.format(line[0],line[1])]='{0}\t{1}'.format(line[3],line[4])
+    else:
+        VCF = open(file)
+        for line in VCF:
+            if line.startswith('#'): continue
+            line=line.strip().split()
+            Dict['{0}-{1}'.format(line[0],line[1])]='{0}\t{1}'.format(line[3],line[4])
+    return Dict
+
+########### 反向互补：
+def ReverseComplement(Seq):
+    return ''.join(["ATCGN"["TAGCN".index(n)] for n in Seq.upper()[::-1]])

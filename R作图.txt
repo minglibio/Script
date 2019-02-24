@@ -1,0 +1,26 @@
+a=read.table("E:/liming/duck/selection/FstFrqPlot/LD长度分布.txt",header=F)
+a=read.table("E:/liming/duck/selection/FstFrqPlot/最高点snp分布.txt",header=F)
+######## 核密度图
+> d <- density(a[,1])
+> plot(d,main="Kernel Density of All Variation")
+> polygon(d,col="red",border="blue")
+> rug(a[,1],col="brown")         加轴须图
+
+
+######## 直方图加核密度图
+hist(a[,1],freq=F,breaks=900,border=0,main="Histogram of All Variation",col="red",xlab="Variation Numbers")
+lines(density(a[,1]),col="blue",lwd=2)
+
+hist(a[,1],freq=F,breaks=300,border=0,main="Histogram of 0.2-0.8 Variation",col="red",xlab="Variation Numbers")
+lines(density(a[,1]),col="blue",lwd=2)
+
+hist(a[,1],freq=F,breaks=100,border=0,main="Histogram of FIX MEAN",col="red",xlab="MEAN")
+lines(density(a[,1]),col="blue",lwd=2)
+
+hist(a[,1],freq=F,breaks=100,border=0,main="Histogram of FIX RATIO",col="red",xlab="RATIO")
+lines(density(a[,1]),col="blue",lwd=2)
+
+######## PCA
+library(ggplot2)
+library(ggrepel)
+ggplot(data,aes(x=V1,y=V2))+geom_point(color="blue",size=3)+geom_text_repel(aes(label=sample),segment.color="grey50",color="grey50")+xlab("Eigenvetor 1(20.00%)")+ylab("Eigenvetor 2(14.00%)")
