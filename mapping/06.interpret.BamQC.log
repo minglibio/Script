@@ -1,0 +1,2 @@
+2018-07-31 12:50:52,322: root: INFO: The command line is:
+	python3 06.interpret.BamQC.py -p /stor9000/apps/users/NWSUAF/2015050469/05.Sheep/03.WorldSheep/02.Y/02.snp/00.BAM_LQ20NEW45/BamStat -o BamStat.sample

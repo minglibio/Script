@@ -1,0 +1,3 @@
+jys -n 4 -M 20000000 -o 01.PrepInput.o -e 01.PrepInput.e -J 01.PrepInput bash ~/script/GWAS/Emmax/01.PrepInput.sh ~/05.Sheep/06.BlackBone/02.VCF/Sheep.YUN.flt2.imp.vcf.gz YUN 26
+
+jys -n 4 -M 20000000 -o 02.RunEmmax.o -e 02.RunEmmax.e -J 02.RunEmmax "bash ~/script/GWAS/Emmax/02.RunEmmax.sh YUN Trait covariate YUN"

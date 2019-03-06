@@ -1,0 +1,12 @@
+#####01
+定位novel位置
+01_novelTOchr_HIC.py
+#####02
+处理定位信息
+02_dealwith_novelTOchr_infro.sh
+#####03
+批量化01
+03_produce_detail_01.sh
+#####04
+批量化02
+03_produce_detail_02.sh

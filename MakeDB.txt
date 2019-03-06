@@ -1,0 +1,11 @@
+#!/bin/bash
+BLAST DB    BLAST 2.2.31+
+makeblastdb -in ${fa} -dbtype nucl -out ${prefix} -parse_seqids
+
+
+LAST DB    lastdb 941
+lastdb -P4 -uNEAR -cR11 ${output-name} ${fasta-sequence-file}
+-P: number of parallel threads (1)
+-u: seeding scheme (default: YASS for DNA, else exact-match seeds)
+-R: repeat-marking options (default=10)
+-c: soft-mask lowercase letters (in reference *and* query sequences)

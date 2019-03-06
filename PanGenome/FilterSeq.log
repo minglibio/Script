@@ -1,0 +1,2 @@
+2019-01-18 10:03:42,180: root: INFO: The command line is:
+	python3 FilterSeq.py -i Test.fa -o Test.out -l 8

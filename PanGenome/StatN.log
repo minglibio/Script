@@ -1,0 +1,2 @@
+2018-12-06 14:34:47,758: root: INFO: The command line is:
+	python3 StatN.py -i Test.fa -o Test

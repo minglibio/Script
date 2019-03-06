@@ -1,0 +1,21 @@
+#!/bin/sh
+#PBS -N Grey-705DC
+#PBS -q fat
+#PBS -l nodes=1:ppn=1
+#PBS -o IBD3200-28.out
+#PBS -e IBD3200-28.err
+cd /GS01/home/wangms/WangMS/Yuanji_SNP/MAF005IBD/Grey_to_allDC
+for i in {1..28}
+do
+perl Step01_filterPop.IBD.pl $i
+perl Step02_mergePop.IBD.pl $i 3536
+done
+
+sort -nk 1 -nk 2 Grey-705DC.Allchicken.allchr.IBD.freq.txt  >Grey-705DC.Allchicken.allchr.IBD.freq.sort.txt
+perl Step03_sliding_w.pl -d 3 -w 10000 -s 5000 Grey-705DC.Allchicken.allchr.IBD.freq.sort.txt >Grey-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.txt
+
+awk '{print$1"\t"$2}' ggsp-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.txt >ggsp-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.pos.txt
+awk '{print$1"\t"$2}' Grey-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.txt >Grey-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.pos.txt
+
+ cat ggsp-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.pos.txt Grey-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.pos.txt |sort | uniq >Grey-ggsp-705DC.Allchicken.allchr.IBD.freq.sort.W10K.S5K.pos.txt
+

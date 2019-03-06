@@ -1,0 +1,2 @@
+2018-12-06 16:03:29,870: root: INFO: The command line is:
+	python3 StatChrLenAndN.py -i Test.fa -o Test
