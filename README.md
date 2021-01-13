@@ -1,5 +1,5 @@
 # Script
-The script used in my research
+Some scripts used in my research
 
 @Author: Ming Li
 
